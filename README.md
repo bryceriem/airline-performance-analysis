@@ -46,22 +46,22 @@ The dataset is organized using Snowflake’s standardized schema, which separate
 <img width="765" height="644" alt="Screenshot 2026-04-15 at 12 40 57 PM" src="https://github.com/user-attachments/assets/8d20b697-736b-4fe7-945f-6e228fc5753c" />  
 <br><br>
 
-#### 4. US_DEPARTENT_OF_TRANSPORTATION_ATTRIBUTES (10 Rows) 
+#### 4. US_DEPARTMENT_OF_TRANSPORTATION_ATTRIBUTES (10 Rows) 
 
 <img width="764" height="287" alt="Screenshot 2026-04-15 at 12 42 13 PM" src="https://github.com/user-attachments/assets/1dd3477f-c93a-4d31-bf31-c474e49d9b54" />  
 <br><br>
 
-#### 5. US_DEPARTENT_OF_TRANSPORTATION_ATTRIBUTES_PIT (10 Rows)
+#### 5. US_DEPARTMENT_OF_TRANSPORTATION_ATTRIBUTES_PIT (10 Rows)
 
 <img width="765" height="446" alt="Screenshot 2026-04-15 at 12 44 28 PM" src="https://github.com/user-attachments/assets/56173aea-a4dc-4346-88f0-f74a53b12f27" />
 <br><br>
 
-#### 6. US_DEPARTENT_OF_TRANSPORTATION_TIMESERIES (123,250,510 Rows)
+#### 6. US_DEPARTMENT_OF_TRANSPORTATION_TIMESERIES (123,250,510 Rows)
 
 <img width="680" height="700" alt="Screenshot 2026-04-15 at 12 45 16 PM" src="https://github.com/user-attachments/assets/bce1d72c-41fa-4fc3-971d-38b8feaa5860" />
 <br><br>
 
-#### 7. US_DEPARTENT_OF_TRANSPORTATION_TIMESERIES_PIT (336,370,033 Rows)
+#### 7. US_DEPARTMENT_OF_TRANSPORTATION_TIMESERIES_PIT (336,370,033 Rows)
 
 <img width="567" height="709" alt="Screenshot 2026-04-15 at 12 45 50 PM" src="https://github.com/user-attachments/assets/d22511cd-3576-452d-9390-a3bf83a8119e" />
 <br><br>
@@ -134,10 +134,10 @@ AIRCRAFT_CARRIER_ID, CARRIER_NAME, VARIABLE, VALUE, DATE
 
 ### 4. Reliability Score Calculation
 - #### What it does:
-  Divides total departures performed by total departures scheduled and multiplies by 100. Results are capped at 100% in Chart 1 using a WHERE filter to exclude carriers that flew more than scheduled.
+  Divides total departures performed by total departures scheduled and multiplies by 100. Results are capped at 100 using LEAST(..., 100) so that no carrier exceeds 100% in the ranking chart — all 9 carriers are always included.
 
 - #### Why:
-  Reliability score is a derived metric measuring scheduling accuracy. Scores above 100% occur when airlines add unplanned flights not captured in the original schedule — valid data, but misleading in a ranking context. The cap ensures the bar chart is interpretable as a reliability measure rather than a volume measure.
+  Reliability score is a derived metric measuring scheduling accuracy. Scores above 100% occur when airlines add unplanned flights not captured in the original schedule — valid data, but misleading in a ranking context. The LEAST() cap clips those values to 100 rather than excluding the carrier entirely, ensuring all carriers appear in every chart.
 
 <img width="629" height="110" alt="reliability score calculation" src="https://github.com/user-attachments/assets/7e93c203-4ca9-417e-b7f6-ec5fbc01f9c6" />
 <br>
@@ -174,10 +174,10 @@ AIRCRAFT_CARRIER_ID, CARRIER_NAME, VARIABLE, VALUE, DATE
 
 ### 8. HAVING Clause for Threshold Filtering
 - #### What it does:
-  Caps all query results at 1,000 rows.
+  Caps all query results at 1,000 rows using a LIMIT clause appended to each query.
 
 - #### Why:
-  Saves token usage.
+  Prevents runaway result sets during development and reduces Snowflake compute usage. With the qualifying carriers filter already scoping results to 9 carriers, no query legitimately needs more than a few hundred rows.
 <br>
 
 # V. Analysis & Results
@@ -280,9 +280,56 @@ This interaction is directly connected to the underlying data: filtering happens
 <img width="1427" height="760" alt="functionality 2 8" src="https://github.com/user-attachments/assets/8bdde5d8-3130-45eb-8663-d06ff601e5b7" />
 <br>
 
-# VII. AI Use Statement
+# 0. AI Usage Statement
 
-Claude (Anthropic) was used throughout this project for dataset exploration, SQL query development, Streamlit app construction, and documentation writing. All queries were tested and verified in Snowflake by the team. Analytical decisions, question selection, and design judgments were made by the team — AI-generated output was reviewed, iterated on, and in several cases rejected or significantly revised before being accepted.
+Claude (Anthropic) was used extensively throughout this project as a development and documentation assistant. All analytical decisions, question framing, and final judgment calls were made by the team. The following documents what was prompted, what AI generated, and what was modified or rejected.
 
-For a full account of what was prompted, what changed, and what was modified or rejected at each phase, see gen-ai-use-statement.md.
+## What Was Prompted and What Changed
+
+**Schema Exploration**
+Prompted Claude to read the USDOT Snowflake documentation and explain the dataset structure. Claude identified the EAV (Entity-Attribute-Value) format of the timeseries table, explained the need for conditional aggregation to pivot variables into columns, and mapped the key join between `US_DEPARTMENT_OF_TRANSPORTATION_TIMESERIES` and `AIRCRAFT_CARRIER_INDEX`. This understanding directly shaped how all queries were written.
+
+**Analytical Question Development**
+Prompted Claude to propose strong analytical questions given the dataset and project requirements. Claude offered multiple options across load factor, reliability, route diversity, and fleet efficiency. The team selected load factor efficiency and departure reliability. Claude then refined the questions to include specific qualifying criteria (100M+ passengers since 2020) and wrote the final question statements used in the README.
+
+**SQL Query Development**
+Prompted Claude to write all 5 dashboard queries. Claude authored the qualifying carriers CTE, the conditional aggregation pivot, the load factor and reliability score calculations, the `NULLIF` division-by-zero protection, the `YEAR % 5 = 0` filter for heatmap readability, and the `LEAST(..., 100)` cap on reliability scores. The team reviewed, tested, and corrected each query in Snowflake.
+
+**Streamlit App Development**
+Snowflake's "Export to Streamlit" feature auto-generated a base app. Claude was prompted to fix several issues with that output and enhance the app. Specific changes Claude made:
+- Replaced the unsupported heatgrid chart type with a Plotly `go.Heatmap` with DataFrame pivoting
+- Fixed the Figure 2.3 scatter chart where auto-generated code grouped by `CARRIER_SIZE` before rendering, dropping `CARRIER_NAME` and breaking the color-by-carrier feature
+- Switched Figure 2.2 and 2.3 to Plotly Express to enable y-axis cuts (`range=[90, 120]` and `range=[97, 104]`)
+- Wrapped dashboards in `st.tabs`
+
+**Documentation**
+Prompted Claude to write all supplementary markdown files: `schema_notes.md`, `methodology.md`, `data_manipulations.md`, `dashboards.md`, and `streamlit.md`. Claude authored the initial drafts; the team reviewed for accuracy against actual query output and Snowflake behavior.
+
+## What Was Modified or Rejected
+
+| Item | Outcome |
+|---|---|
+| Scorecard chart proposed for Q1 | Rejected — team found it redundant with the line chart |
+| "Cancelled departures" framing for Q2 | Rejected — team preferred the reliability ratio; reverted |
+| Multiple carrier filter combinations | Iteratively tested; several rejected before settling on 100M passengers since 2020 |
+| Year range slider (interactive element) | Implemented then removed — team decided it added complexity without enough focused value |
+| Separate carrier filter + spotlight controls | Merged into a single Compare Carriers control at team direction |
+| Filter-to-remove carrier behavior | Rejected — team preferred greying out over removing carriers entirely |
+| On-chart text labels for Figure 2.3 | Removed after label clipping and overlap issues; replaced with hover tooltips |
+| `margin=dict(...)` fix for Figure 2.3 clipping | Rejected — team correctly identified it added margin around the chart, not around the labels |
+| Reset button using direct session state assignment | Failed with Streamlit API exception; fixed by moving the clear logic to an `on_click` callback |
+| `default=[]` on keyed multiselect | Caused widget/session state conflict; removed in favor of pre-initialization with `if key not in st.session_state` |
+
+---
+
+# 00. Documentation
+
+| File | Contents |
+|---|---|
+| schema_notes.md | Full schema reference — all tables, columns, types, examples, join patterns |
+| methodology.md | Carrier filtering rationale, qualifying carrier list, derived metric definitions |
+| data_manipulations.md | All SQL transformations, filters, aggregations, and calculated fields explained |
+| dashboards.md | All dashboard queries, chart configs, and written interpretations |
+| streamlit.md | Streamlit app documentation — structure, libraries, chart decisions, fixes |
+| gen-ai-use-statement.md | Full AI usage log — what was prompted, what changed, what was modified or rejected |
 
