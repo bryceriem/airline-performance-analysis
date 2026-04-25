@@ -7,7 +7,7 @@ Group 4 | MIST4610: Data Management & Analytics w/ Dr. Nikhil Srinivasan | Group
 61608 Group 4
 ### Team Members:
 1. Jacob Witucki [@jacobwitucki](https://github.com/jacobWitucki)
-2. Ashleigh Serrafin [@ashleighserafin](https://github.com/ashleighserafin)
+2. Ashleigh Serafin [@ashleighserafin](https://github.com/ashleighserafin)
 3. Bryce Riemersma [@bryceriem](https://github.com/bryceriem)
 4. Lily Shaw  [@lilyshaw714](https://github.com/lilyshaw714)
 5. Matt Miller  [@matthewroanmiller](https://github.com/matthewroanmiller)
@@ -222,4 +222,67 @@ If the dots cluster with larger carriers scoring lower, it confirms that operati
 <br><br>
 
 # VI. Streamlit App
+
+The Snowflake dashboards were exported and rebuilt as a live Streamlit web application connected directly to Snowflake. The app renders all five figures interactively, organized into two tabs — one per analytical question — with a sidebar Compare Carriers control that lets users isolate specific airlines across every chart simultaneously. An industry average benchmark is always visible in each chart as a reference point. All data is queried live from Snowflake on load and cached for the session.
+
+<img width="1432" height="762" alt="streamlit 1" src="https://github.com/user-attachments/assets/23796ba7-5671-4617-a1f0-4f0c2e52b94c" />
+<br>
+
+<img width="1431" height="762" alt="streamlit 2" src="https://github.com/user-attachments/assets/754a7352-3407-47bd-9ef8-ae2ab2ba79c2" />
+<br>
+
+<img width="1430" height="761" alt="streamlit 3" src="https://github.com/user-attachments/assets/c8cac033-6da0-48e3-9f32-946c17757a08" />
+<br>
+
+<img width="1430" height="762" alt="streamlit 4" src="https://github.com/user-attachments/assets/2008b91f-d9fb-4e99-b6f4-e24e3ff3e45b" />
+<br>
+
+<img width="1431" height="761" alt="streamlit 5" src="https://github.com/user-attachments/assets/6d9e29a9-e054-4b71-9e9b-6bba1479724a" />
+<br><br>
+
+### Interactive Element 1: Dashboard Tabs
+
+The app is split into two tabs — one per analytical question — keeping the load factor and reliability dashboards visually separate. Switching tabs does not reset any filters, so a carrier selection made in one dashboard carries over immediately to the other. This interaction is built for more of a quality and user-experience aspect than a significant analytical value feature. 
+
+<img width="1432" height="762" alt="functionality 1 1" src="https://github.com/user-attachments/assets/00c5984d-5cd3-44f9-945d-ee97fb45a290" />
+<br>
+
+<img width="1430" height="761" alt="functionality 1 2" src="https://github.com/user-attachments/assets/49676155-b069-4655-98fa-64829ad55ce3" />
+<br><br>
+
+### Interactive Element 2: Compare Carriers
+
+The sidebar Compare Carriers multiselect allows users to isolate any subset of the 9 carriers across all five charts simultaneously. When a selection is made, unselected carriers are removed from every chart — and the Industry Average benchmark remains visible in every chart regardless of what is selected, always computed from all 9 carriers as a fixed reference point. Selecting none restores the full view; a Reset to All button clears the selection in one click.
+
+This interaction is directly connected to the underlying data: filtering happens at the DataFrame level after each Snowflake query, and the benchmark never changes with the selection. Shown here filtered to Delta Air Lines and American Airlines — the comparison immediately surfaces how two of the largest U.S. carriers stack up against each other and against the industry average across load factor history, reliability ranking, reliability over time, and size-to-reliability position, across both dashboards at once without re-entering any parameters.
+
+<img width="1432" height="762" alt="functionality 2 1" src="https://github.com/user-attachments/assets/0cf67947-7d81-4c3c-987e-08b1e6390964" />
+<br>
+
+<img width="1430" height="760" alt="functionality 2 2" src="https://github.com/user-attachments/assets/21003093-6628-4fef-bc19-cdc2e8c1c9d3" />
+<br>
+
+<img width="1427" height="760" alt="functionality 2 3" src="https://github.com/user-attachments/assets/633d8cfb-f67f-4da6-a804-434f1c7fca3f" />
+<br>
+
+<img width="1431" height="762" alt="functionality 2 4" src="https://github.com/user-attachments/assets/bf6c323b-1d5a-4cdd-8bf9-2549720ca531" />
+<br>
+
+<img width="1429" height="762" alt="functionality 2 5" src="https://github.com/user-attachments/assets/8fae7113-0a06-4612-b173-a037fadaebc5" />
+<br>
+
+<img width="1429" height="760" alt="functionality 2 6" src="https://github.com/user-attachments/assets/01c69de0-916e-4a8a-b3e3-9547a8daab94" />
+<br>
+
+<img width="1428" height="761" alt="functionality 2 7" src="https://github.com/user-attachments/assets/02c6de93-b6c0-4c39-a6c9-b44c8d3328b0" />
+<br>
+
+<img width="1427" height="760" alt="functionality 2 8" src="https://github.com/user-attachments/assets/8bdde5d8-3130-45eb-8663-d06ff601e5b7" />
+<br>
+
+# VII. AI Use Statement
+
+Claude (Anthropic) was used throughout this project for dataset exploration, SQL query development, Streamlit app construction, and documentation writing. All queries were tested and verified in Snowflake by the team. Analytical decisions, question selection, and design judgments were made by the team — AI-generated output was reviewed, iterated on, and in several cases rejected or significantly revised before being accepted.
+
+For a full account of what was prompted, what changed, and what was modified or rejected at each phase, see gen-ai-use-statement.md.
 
