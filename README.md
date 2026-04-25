@@ -291,10 +291,10 @@ For a full account of what was prompted, what changed, and what was modified or 
 
 | File | Contents |
 |---|---|
-| schema_notes.md | Full schema reference — all tables, columns, types, examples, join patterns |
-| methodology.md | Carrier filtering rationale, qualifying carrier list, derived metric definitions |
-| data_manipulations.md | All SQL transformations, filters, aggregations, and calculated fields explained |
-| dashboards.md | All dashboard queries, chart configs, and written interpretations |
-| streamlit.md | Streamlit app documentation — structure, libraries, chart decisions, fixes |
-| gen-ai-use-statement.md | Full AI usage log — what was prompted, what changed, what was modified or rejected |
+| [schema_notes.md](documentation/schema_notes.md) | Full schema reference — all tables, columns, types, examples, join patterns |
+| [methodology.md](documentation/methodology.md) | Carrier filtering rationale, qualifying carrier list, derived metric definitions |
+| [data_manipulations.md](documentation/data_manipulations.md) | All SQL transformations, filters, aggregations, and calculated fields explained |
+| [dashboards.md](documentation/dashboards.md) | All dashboard queries, chart configs, and written interpretations |
+| [streamlit.md](documentation/streamlit.md) | Streamlit app documentation — structure, libraries, chart decisions, fixes |
+| [gen-ai-use-statement.md](documentation/gen-ai-use-statement.md) | Full AI usage log — what was prompted, what changed, what was modified or rejected |
 
