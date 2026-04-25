@@ -107,7 +107,7 @@ AIRCRAFT_CARRIER_ID, CARRIER_NAME, VARIABLE, VALUE, DATE
   Identifies the 9 carriers used across all dashboard queries by filtering the timeseries table to carriers with over 100 million passengers transported since January 2020.
 
 - #### Why:
-  The raw dataset contains 955 carriers including defunct airlines, regional feeders, and cargo operators. This CTE scopes all downstream analysis to current, mainline passenger carriers without hardcoding any carrier names, making the filter data-driven and reproducible.
+  The raw dataset contains 955 carriers, including defunct airlines, regional feeders, and cargo operators. This CTE scopes all downstream analysis to current, mainline passenger carriers without hardcoding any carrier names, making the filter data-driven and reproducible.
 
 <img width="749" height="204" alt="qualifying carriers" src="https://github.com/user-attachments/assets/355515c8-4369-438f-93c7-498fac1a6cc5" />
 <br>
@@ -221,4 +221,5 @@ The 2020 dip visible across carriers reflects pandemic-era mass cancellations, b
 If the dots cluster with larger carriers scoring lower, it confirms that operational scale introduces complexity that degrades reliability; a finding with real policy and consumer implications. Conversely, if large carriers score as well or better than small ones, it suggests that resources and infrastructure at scale actually support more consistent operations. The distribution of dots tells a story about whether the industry's biggest players are earning their market dominance through operational excellence or simply through network lock-in despite inferior reliability.
 <br><br>
 
-# 
+# VI. Streamlit App
+
